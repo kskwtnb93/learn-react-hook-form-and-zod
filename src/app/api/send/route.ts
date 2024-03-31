@@ -13,7 +13,6 @@ export async function POST(request: Request) {
   const file = formData.get('file')
 
   const buffer = await Buffer.from(await file.arrayBuffer())
-  console.log(buffer)
 
   try {
     const data = await resend.emails.send({
