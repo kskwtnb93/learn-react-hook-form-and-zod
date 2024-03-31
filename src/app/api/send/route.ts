@@ -4,7 +4,16 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: Request) {
-  const { username, subject, email, content } = await request.json()
+  const formData = await request.formData()
+
+  const username = formData.get('username')
+  const email = formData.get('email')
+  const subject = formData.get('subject')
+  const content = formData.get('content')
+  const file = formData.get('file')
+
+  const buffer = await Buffer.from(await file.arrayBuffer())
+  console.log(buffer)
 
   try {
     const data = await resend.emails.send({
@@ -16,6 +25,7 @@ export async function POST(request: Request) {
         email: email,
         content: content,
       }),
+      attachments: [{ filename: file.name, content: buffer }],
     })
 
     return Response.json(data)
